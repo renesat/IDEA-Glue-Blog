@@ -1,0 +1,35 @@
+name: IDEA-Glue-Blog
+version: 0.1.0
+
+author: "Ivan Smolyakov"
+maintainer: "smol.ivan97@gmail.com"
+copyright: "2020-2021 Ivan Smolyakov"
+license: MIT
+
+ghc-options: -Wall
+
+dependencies:
+  - base
+  - filepath
+
+executables:
+  site:
+    source-dirs:
+      - src
+    main: Main.hs
+    ghc-options: -threaded
+    dependencies:
+      - base == 4.*
+      - hakyll
+      - ini
+      - unordered-containers
+      - text == 1.*
+      - process
+      - containers
+      - aeson
+      - hakyll-sass
+      - language-javascript == 0.7.*
+      - bytestring
+      - pandoc
+      - pandoc-types
+      - text-conversions

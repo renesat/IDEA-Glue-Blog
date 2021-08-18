@@ -1,0 +1,42 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.34.4.
+--
+-- see: https://github.com/sol/hpack
+
+name:           IDEA-Glue-Blog
+version:        0.1.0
+author:         Ivan Smolyakov
+maintainer:     smol.ivan97@gmail.com
+copyright:      2020-2021 Ivan Smolyakov
+license:        MIT
+build-type:     Simple
+
+executable site
+  main-is: Main.hs
+  other-modules:
+      Configs
+      Context
+      KaTeX.KaTeXify
+      Pygments.Pygments
+      Paths_IDEA_Glue_Blog
+  hs-source-dirs:
+      src
+  ghc-options: -Wall -threaded
+  build-depends:
+      aeson
+    , base ==4.*
+    , bytestring
+    , containers
+    , filepath
+    , hakyll
+    , hakyll-sass
+    , ini
+    , language-javascript ==0.7.*
+    , pandoc
+    , pandoc-types
+    , process
+    , text ==1.*
+    , text-conversions
+    , unordered-containers
+  default-language: Haskell2010
