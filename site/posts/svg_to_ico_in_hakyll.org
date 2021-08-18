@@ -1,0 +1,93 @@
+---
+title: How convert SVG icon to favicon in Hakyll
+tags: hakyll, haskell, blog
+date: 2021-07-01
+# toc: true
+status: published
+...
+
+
+I am using Hakyll for this blog. And I have a problem start script for every icon change.
+And I thought: Why am I not using Hakyll to do this?
+
+Icon has been created in Inkscape with SVG format.
+A script like this converted SVG icon to PNG:
+
+#+begin_src bash
+inkscape -w 16 -h 16 -o icon-16.png icon.svg
+inkscape -w 32 -h 32 -o icon-32.png icon.svg
+convert icon-16.png icon-32.png favicon.ico
+#+end_src
+
+#+begin_export HTML
+<!--more-->
+#+end_export
+
+I am not using only ImageMagick because it doesn't convert the background correctly.
+Twice start Inkscape is not a good idea. I find
+parameter *~actions~* and rewrite the script for run Inkscape once:
+
+#+begin_src bash
+inkscape --without-gui --actions "export-width:16px; export-filename:icon-16.png; export-do; export-width:32px; export-filename:icon-32.png; export-do;" icon.svg
+convert icon-16.png icon-32.png favicon.ico
+#+end_src
+
+It's a long command but good for a script running speed (I don't know why I need this...).
+
+I create a new route in Hakyll with */icon.svg/* depend:
+
+#+begin_src  haskell
+iconDep <- makePatternDependency "images/icon.svg"
+rulesExtraDependencies [iconDep] $ create ["favicon.ico"] $ do
+    route   idRoute
+    compile $ faviconCompiler "site/images/icon.svg"
+#+end_src
+
+*~faviconCompiler~* create */favicon.ico/* using */icon.svg/*:
+
+#+begin_src haskell
+faviconCompiler :: FilePath -> Compiler (Item LBS.ByteString)
+faviconCompiler svgPath =
+  let sizes = [32, 16] :: [Int]
+  in do
+    tmpFiles <- getFaviconPngs svgPath sizes
+    paths <- return $ map (\(TmpFile tmpPath) -> tmpPath) tmpFiles
+    ico <- (unixFilterLBS "convert" (paths ++ ["ico:-"]) "")
+    makeItem ico
+#+end_src
+
+Function *~getFaviconPngs~* create multiple [[https://hackage.haskell.org/package/hakyll-4.14.0.0/docs/Hakyll-Core-File.html#t:TmpFile][TmpFile]] and PNG for each size.
+Inkscape starts once using [[https://hackage.haskell.org/package/process-1.6.11.0/docs/System-Process.html][Hakyll's process]].
+
+#+begin_src haskell
+createFaviconExportLine :: Int -> TmpFile -> String
+createFaviconExportLine size (TmpFile path) =
+  "export-width:" ++ show size ++ "px; export-filename:" ++ path ++ "; export-do;"
+
+getFaviconPngs :: FilePath -> [Int] -> Compiler [TmpFile]
+getFaviconPngs svgPath sizes = do
+  tmpFiles <- sequence $ map
+      (\size -> newTmpFile $ "hakyll-blog-favicon-" ++ show size ++ ".png")
+      sizes
+  actions <- return
+    $ foldr1 (++)
+    $ map (uncurry createFaviconExportLine)
+    $ zip sizes tmpFiles
+  (_, _, _, handle) <- unsafeCompiler $ createProcess
+        (proc "inkscape" ["--without-gui", "--actions",  actions, svgPath])
+        { std_err = NoStream
+        , std_out = NoStream
+        , use_process_jobs = True
+        }
+  _ <- unsafeCompiler $ waitForProcess handle
+  return tmpFiles
+#+end_src
+
+Finally, I use ImageMagick for creating ICO:
+
+#+begin_src haskell
+...
+    ico <- (unixFilterLBS "convert" (paths ++ ["ico:-"]) "")
+...
+#+end_src
+

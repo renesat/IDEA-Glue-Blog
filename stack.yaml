@@ -1,0 +1,20 @@
+resolver: lts-17.7
+# resolver: nightly-2021-03-21
+packages:
+  - .
+extra-deps:
+  - hakyll-4.14.0.0
+  - cryptonite-0.27
+  - optparse-applicative-0.15.1.0
+  - pandoc-2.11.4
+  - ini-0.4.1
+  - hakyll-sass-0.2.4
+  # - hsass-0.8.0
+  # - hlibsass-0.1.10.1
+  # - validation-selective-0.1.0.1
+  # - language-javascript-0.7.1.0
+#allow-newer: true
+nix:
+  enable: true
+  shell-file: shell.nix
+  add-gc-roots: true

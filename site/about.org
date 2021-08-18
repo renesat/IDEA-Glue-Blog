@@ -1,0 +1,16 @@
+---
+title: About
+page-id: about
+...
+
+Welcome to my personal blog.
+At this moment, I ordinary student from Russia.
+My area of interest includes many things.
+Mainly this is *OpenSource*, *DeepLearning*, and *Linux*.
+My ultimate editor -- *Emacs*.
+The best programming languages for me are
+*Haskell*, *Lisp* and *Julia* (maybe I try Rust).
+I will write my technical posts and workflows on this site.
+But sometimes I may write posts about my hobbies
+and life.
+I hope you will find something interesting here.

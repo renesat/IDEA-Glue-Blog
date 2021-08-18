@@ -1,0 +1,25 @@
+<ul id="posts-list">
+    $for(posts)$
+        <li>
+            <hr class="post-boarder"></hr>
+            <article>
+                <h1 class="teaser-title"><a href="$url$">$title$</a></h1>
+                <section class="header">
+                    Posted on $date$
+                    <br>
+                    $if(tags)$
+                    Tags: $tags$
+                    $endif$
+                </section>
+
+
+                $if(teaser)$
+                  $teaser$
+                $endif$
+
+                <p><a class="readmore" href="$url$">Read more..</a></p>
+            </article>
+
+        </li>
+    $endfor$
+</ul>
