@@ -33,8 +33,11 @@ import           Context
 main :: IO ()
 main = hakyllWith generatorConfig $ do
 
-  blogConfig <- preprocess $ getConfig "config.ini"
+  configDep <- makePatternDependency "config.ini"
+  blogConfig <- rulesExtraDependencies [configDep] $ do
+    preprocess $ getConfig "site/config.ini"
   blogContext <- preprocess $ contextFromBlogConfig blogConfig
+
 
   iconDep <- makePatternDependency "images/icon.svg"
   rulesExtraDependencies [iconDep] $ create ["favicon.ico"] $ do
@@ -194,8 +197,8 @@ faviconCompiler svgPath =
   in do
     _ <- unsafeCompiler $ putStrLn "  Compile favicon..."
     tmpFiles <- getFaviconPngs svgPath sizes
-    paths <- return $ map (\(TmpFile tmpPath) -> tmpPath) tmpFiles
-    ico <- (unixFilterLBS "convert" (paths ++ ["ico:-"]) "")
+    let paths = map (\(TmpFile tmpPath) -> tmpPath) tmpFiles
+    ico <- unixFilterLBS "convert" (paths ++ ["ico:-"]) ""
     makeItem ico
 
 -- Get post grouped by years

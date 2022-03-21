@@ -21,14 +21,14 @@ rawKaTeX mt inner = readCreateProcess (shell $ kaTeXCmd mt) (T.unpack inner)
 parseKaTeX :: String -> Maybe Inline
 parseKaTeX str =
   -- Ensure str is parsable HTML
-  case runPure $ readHtml def (convertText str) of
+  case runPure $ readHtml def (convertText str :: T.Text) of
     Right _   -> Just (RawInline (Format (T.pack "html")) (T.pack str))
     _ -> Nothing
 
 kaTeXify :: Inline -> IO Inline
 kaTeXify orig@(Math mt str) =
   do
-    s <- fmap parseKaTeX $ rawKaTeX mt str
+    s <- parseKaTeX <$> rawKaTeX mt str
     case s of
       Just inl  -> return inl
       Nothing -> return orig
