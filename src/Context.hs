@@ -21,7 +21,7 @@ contextFromBlogConfig blogConfig =
     <> defaultContext
  where
   addField :: (Text, Text) -> Context String
-  addField (name, value) = constField ("blog-" ++ (unpack name)) (unpack value)
+  addField (name, value) = constField ("blog-" ++ unpack name) (unpack value)
 
 -- Base on https://groups.google.com/forum/#!searchin/hakyll/if$20class/hakyll/WGDYRa3Xg-w/nMJZ4KT8OZUJ
 activeClassField :: Context a
@@ -84,4 +84,4 @@ mathCtx = field "katex-header" $ \item -> do
 
 -- Feed context
 feedCtx :: Context String -> Context String
-feedCtx context = (postCtx context) <> bodyField "description"
+feedCtx context = postCtx context <> bodyField "description"
