@@ -1,6 +1,6 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.34.4.
+-- This file has been generated from package.yaml by hpack version 0.34.6.
 --
 -- see: https://github.com/sol/hpack
 
@@ -10,6 +10,7 @@ author:         Ivan Smolyakov
 maintainer:     smol.ivan97@gmail.com
 copyright:      2020-2021 Ivan Smolyakov
 license:        MIT
+license-file:   LICENSE
 build-type:     Simple
 
 executable site
