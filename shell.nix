@@ -1,17 +1,3 @@
-{ pkgs ? import <nixpkgs> { } }:
+{ system ? builtins.currentSystem }:
 
-with pkgs;
-haskell.lib.buildStackProject {
-  inherit ghc;
-  name = "IDEA-Glue-Blog";
-  buildInputs = [
-    nodePackages.katex
-
-    inkscape
-    imagemagick
-
-    python39Packages.pygments
-
-    zlib
-  ];
-}
+(builtins.getFlake (toString ./.)).devShell.${system}
