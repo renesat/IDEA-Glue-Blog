@@ -20,15 +20,15 @@ executables:
     ghc-options: -threaded
     dependencies:
       - base == 4.*
-      - hakyll
+      - hakyll == 4.15.*
+      - hakyll-sass == 0.2.4
+      - text == 1.*
+      - language-javascript == 0.7.*
       - ini
       - unordered-containers
-      - text == 1.*
       - process
       - containers
       - aeson
-      - hakyll-sass
-      - language-javascript == 0.7.*
       - bytestring
       - pandoc
       - pandoc-types
