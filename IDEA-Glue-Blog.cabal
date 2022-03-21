@@ -29,8 +29,8 @@ executable site
     , bytestring
     , containers
     , filepath
-    , hakyll
-    , hakyll-sass
+    , hakyll ==4.15.*
+    , hakyll-sass ==0.2.4
     , ini
     , language-javascript ==0.7.*
     , pandoc

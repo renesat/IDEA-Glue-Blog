@@ -5,40 +5,12 @@
 
 packages:
 - completed:
-    hackage: hakyll-4.14.0.0@sha256:28aab547aa94202d486328aa4bbcd02ecbefc4e5d42dfa15e8137b731a4f5d55,9059
+    hackage: hakyll-4.15.0.1@sha256:35ccf52def1a7aa0193b4e48e84cbbb4e06740ef0a41ec5e8c2ccb6b99391de0,9634
     pantry-tree:
-      size: 8272
-      sha256: b5dff3f9f3c9bc32b154d8f5b30f88fc12f88a32dd7a10ac7f16584af5059b3f
+      size: 8559
+      sha256: 8bc3679796ee0a0c05547a4b91aeff3b308fa9c22722d890e5f3caa8a7cb0053
   original:
-    hackage: hakyll-4.14.0.0
-- completed:
-    hackage: cryptonite-0.27@sha256:b75ec07ef0244574aa5374f0a1b349dff8c8f84583cb6c58fd95e565245716d4,18143
-    pantry-tree:
-      size: 22989
-      sha256: 1a63bb79748aeb2c0312d6a166fe8436a139929b017bf208f002e79073d21966
-  original:
-    hackage: cryptonite-0.27
-- completed:
-    hackage: optparse-applicative-0.15.1.0@sha256:29ff6146aabf54d46c4c8788e8d1eadaea27c94f6d360c690c5f6c93dac4b07e,4810
-    pantry-tree:
-      size: 2904
-      sha256: 04ad3816bc580cbe0834d3d1f4729ddd386abfe31b43e5b14968885f636d1b0d
-  original:
-    hackage: optparse-applicative-0.15.1.0
-- completed:
-    hackage: pandoc-2.11.4@sha256:72ff2d50048fe7c11ef67bc936f7fdb986282e72edbb5647db1ab63e415c8bc5,40050
-    pantry-tree:
-      size: 118526
-      sha256: 2856fb6c5d6948f3c58f50b3883535f62321db3cceb7b58cd9dd1e6082a0e570
-  original:
-    hackage: pandoc-2.11.4
-- completed:
-    hackage: ini-0.4.1@sha256:ace68f1e022b4319e4cb575a17665bb64a271bc7118e1127f09cea7d33e06824,1229
-    pantry-tree:
-      size: 255
-      sha256: 798e77a0639e74bfda26b0208035ce39361de474983426ab3f99004e694022e5
-  original:
-    hackage: ini-0.4.1
+    hackage: hakyll-4.15.0.1
 - completed:
     hackage: hakyll-sass-0.2.4@sha256:4d2fbd8b63f5ef15483fc6dda09e10eefd63b4f873ad38dec2a3607eb504a8ba,939
     pantry-tree:
@@ -48,7 +20,7 @@ packages:
     hackage: hakyll-sass-0.2.4
 snapshots:
 - completed:
-    size: 565715
-    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/17/7.yaml
-    sha256: 1b5e4124989399e60e7a7901f0cefd910beea546131fb07a13a7208c4cc8b7ee
-  original: lts-17.7
+    size: 586268
+    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/18/13.yaml
+    sha256: d9e658a22cfe8d87a64fdf219885f942fef5fe2bcb156a9800174911c5da2443
+  original: lts-18.13
