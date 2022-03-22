@@ -1,13 +1,18 @@
-<article>
-    <section class="header">
-        Posted on $date$
+<article class="h-entry">
+    <h1 class="p-name" id="title">
+        $title$
+    </h1>
+    <section class="header e-content">
+        Posted on <time class="dt-published" datetime="$published$">$date$</time>
+                    
     </section>
     <div class="header">
         $if(tags)$
-        Tags: $tags$
+        Tags: <div rel=tag class="p-category">$tags$</div>
+        <!-- TODO: add class for each tag -->
         $endif$
     </div>
-    <section>
+    <section class="e-content">
         $body$
     </section>
 </article>
