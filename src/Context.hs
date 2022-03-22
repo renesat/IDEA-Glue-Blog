@@ -16,7 +16,7 @@ import           Hakyll
 contextFromBlogConfig :: BlogConfig -> IO (Context String)
 contextFromBlogConfig blogConfig =
   return
-    $  (foldl1 mappend $ map addField (toList blogConfig))
+    $  foldl1 mappend (map addField (toList blogConfig))
     <> activeClassField
     <> defaultContext
  where
