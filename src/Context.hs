@@ -36,8 +36,8 @@ activeClassField = functionField "activeClass" $ \[p] item -> do
 -- Pages contexts
 
 -- Post page
-postCtx :: Context String
-postCtx = dateField "date" "%B %e, %Y" <> mathCtx
+postCtx :: Tags -> Context String
+postCtx tags = tagsField "tags" tags <> dateField "date" "%B %e, %Y" <> mathCtx
 
 -- Archive page
 archiveCtx
@@ -55,6 +55,15 @@ indexCtx posts postContext = listField
   "posts"
   (teaserField "teaser" "_content" <> postContext)
   (return posts)
+
+-- Tag page
+tagCtx :: String -> [Item String] -> Context String -> Context String
+tagCtx tag posts postContext = constField "title" tag <> listField
+  "posts"
+  (teaserField "teaser" "_content" <> postContext)
+  (return posts)
+
+
 
 ------------------------------------------
 -- Support contexts
@@ -77,5 +86,5 @@ mathCtx = field "katex-header" $ \item -> do
 -- Feed functions
 
 -- Feed context
-feedCtx :: Context String
-feedCtx = postCtx <> bodyField "description"
+feedCtx :: Tags -> Context String
+feedCtx tags = postCtx tags <> bodyField "description"

@@ -12,25 +12,8 @@
     $endif$
 </div>
 
-<div class="header">
-    Author:
-    $if(author)$
-
-    $if(author-url)$
-    <a rel="author" class="p-author h-card" href="$author-url$">
-        $endif$
-
-        $author$
-
-        $if(author-url)$
-    </a>
-    $endif$
-
-    $else$
-
+<div class="header hide">
     <a rel="author" class="p-author h-card" rel="me" href="$blog-link$">
-        $blog-author-name$
+        $blog-author$
     </a>
-
-    $endif$
 </div>

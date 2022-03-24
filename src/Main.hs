@@ -48,8 +48,20 @@ main = hakyllWith generatorConfig $ do
     preprocess $ getConfig "site/config.ini"
   blogContext <- preprocess $ contextFromBlogConfig blogConfig
 
+  tags        <- buildTags "posts/*" (fromCapture "tags/*.html")
+  tagsRules tags $ \tag p -> do
+    route idRoute
+    compile $ do
+      posts <- recentFirst =<< loadAllSnapshots p "_content"
+      let postContext = postCtx tags <> blogContext
+          ctx         = tagCtx tag posts postContext <> blogContext
 
-  iconDep     <- makePatternDependency "images/icon.svg"
+      makeItem ""
+        >>= loadAndApplyTemplate "templates/tag.html"     ctx
+        >>= loadAndApplyTemplate "templates/default.html" ctx
+        >>= relativizeUrls
+
+  iconDep <- makePatternDependency "images/icon.svg"
   rulesExtraDependencies [iconDep] $ create ["favicon.ico"] $ do
     route idRoute
     compile $ faviconCompiler "site/images/icon.svg"
@@ -87,7 +99,7 @@ main = hakyllWith generatorConfig $ do
     compile $ do
       posts <- recentFirst =<< loadAllSnapshots "posts/*" "_content"
       years <- postsByYears posts
-      let postContext = postCtx <> blogContext
+      let postContext = postCtx tags <> blogContext
           ctx         = archiveCtx years postContext <> blogContext
       getResourceBody
         >>= applyAsTemplate ctx
@@ -98,7 +110,7 @@ main = hakyllWith generatorConfig $ do
     route idRoute
     compile $ do
       posts <- recentFirst =<< loadAllSnapshots "posts/*" "_content"
-      let postContext = postCtx <> blogContext
+      let postContext = postCtx tags <> blogContext
           ctx         = indexCtx posts postContext <> blogContext
       getResourceBody
         >>= applyAsTemplate ctx
@@ -109,12 +121,12 @@ main = hakyllWith generatorConfig $ do
     route idRoute
     compile $ feedCompiler renderAtom
                            (feedConfig blogConfig)
-                           (feedCtx <> blogContext)
+                           (feedCtx tags <> blogContext)
 
   matchMetadata "posts/*" (\m -> lookupString "status" m == Just "published")
     $ do
         route $ setExtension "html"
-        let ctx = postCtx <> blogContext
+        let ctx = postCtx tags <> blogContext
         compile
           $   blogPandocCompiler
           >>= saveSnapshot "_content"
