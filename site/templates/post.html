@@ -1,40 +1,10 @@
 <article class="h-entry">
+
     <h1 class="p-name" id="title">
-        $title$</a>
+        $title$
     </h1>
-    <a class="hide u-url" href="$url$">$title$</a>
-    <section class="header">
-        Posted on <time class="dt-published" datetime="$published$">$date$</time>
-    </section>
-    <div class="header">
-        $if(tags)$
-        Tags: <span rel=tag class="p-category">$tags$</span>
-        <!-- TODO: add class for each tag -->
-        $endif$
-    </div>
-    <div class="header">
-        Author:
-        $if(author)$
 
-            $if(author-url)$
-        <a rel="author" class="p-author h-card" href="$author-url$">
-            $endif$
-
-            $author$
-
-            $if(author-url)$
-        </a>
-            $endif$
-
-        $else$
-
-        <a rel="author" class="p-author h-card" rel="me" href="$blog-link$">
-            $blog-author-name$
-        </a>
-
-        $endif$
-    </div>
-
+    $partial("templates/post-header.html")$
 
     <section class="e-content">
         $body$
