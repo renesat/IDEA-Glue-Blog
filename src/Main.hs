@@ -240,7 +240,7 @@ postsByYears posts = do
   isEqYear a b = liftA2 (==) (getYear a) (getYear b)
   createGroup lst = do
     year <- getYear $ head lst
-    makeItem (year, posts)
+    makeItem (year, lst)
 
 getYear :: MonadMetadata m => Item a -> m String
 getYear item = do
