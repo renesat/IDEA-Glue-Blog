@@ -87,36 +87,39 @@ main = hakyllWith generatorConfig $ do
     compile $ do
       posts <- recentFirst =<< loadAllSnapshots "posts/*" "_content"
       years <- postsByYears posts
+      let postContext = postCtx <> blogContext
+          ctx         = archiveCtx years postContext <> blogContext
       getResourceBody
-        >>= applyAsTemplate (archiveCtx years blogContext)
-        >>= loadAndApplyTemplate "templates/default.html"
-                                 (archiveCtx years blogContext)
+        >>= applyAsTemplate ctx
+        >>= loadAndApplyTemplate "templates/default.html" ctx
         >>= relativizeUrls
 
   match "index.html" $ do
     route idRoute
     compile $ do
       posts <- recentFirst =<< loadAllSnapshots "posts/*" "_content"
+      let postContext = postCtx <> blogContext
+          ctx         = indexCtx posts postContext <> blogContext
       getResourceBody
-        >>= applyAsTemplate (indexCtx posts blogContext)
-        >>= loadAndApplyTemplate "templates/default.html"
-                                 (indexCtx posts blogContext)
+        >>= applyAsTemplate ctx
+        >>= loadAndApplyTemplate "templates/default.html" ctx
         >>= relativizeUrls
 
   create ["atom.xml"] $ do
     route idRoute
-    compile
-      $ feedCompiler renderAtom (feedConfig blogConfig) (feedCtx blogContext)
+    compile $ feedCompiler renderAtom
+                           (feedConfig blogConfig)
+                           (feedCtx <> blogContext)
 
   matchMetadata "posts/*" (\m -> lookupString "status" m == Just "published")
     $ do
         route $ setExtension "html"
+        let ctx = postCtx <> blogContext
         compile
           $   blogPandocCompiler
           >>= saveSnapshot "_content"
-          >>= loadAndApplyTemplate "templates/post.html" (postCtx blogContext)
-          >>= loadAndApplyTemplate "templates/default.html"
-                                   (postCtx blogContext)
+          >>= loadAndApplyTemplate "templates/post.html"    ctx
+          >>= loadAndApplyTemplate "templates/default.html" ctx
           >>= relativizeUrls
 
   match "templates/*" $ compile templateBodyCompiler
@@ -229,7 +232,7 @@ postsByYears posts = do
 
 getYear :: MonadMetadata m => Item a -> m String
 getYear item = do
-  date <- getMetadataField (itemIdentifier item) "date"
+  date <- getMetadataField (itemIdentifier item) "published"
   return $ maybe "Unknown" (take 4) date
 
 -- Source: https://doisinkidney.com/posts/2018-02-11-monadic-list.functions.html

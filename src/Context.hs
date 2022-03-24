@@ -32,35 +32,29 @@ activeClassField = functionField "activeClass" $ \[p] item -> do
   pageExists (Just v) = return v
   pageExists Nothing  = return "none"
 
-
-
 ------------------------------------------
 -- Pages contexts
 
 -- Post page
-postCtx :: Context String -> Context String
-postCtx context = dateField "date" "%B %e, %Y" <> mathCtx <> context
+postCtx :: Context String
+postCtx = dateField "date" "%B %e, %Y" <> mathCtx
 
 -- Archive page
 archiveCtx
   :: [Item (String, [Item String])] -> Context String -> Context String
-archiveCtx years context =
-  listField
-      "years"
-      (  field "year" (return . fst . itemBody)
-      <> listFieldWith "posts" (postCtx context) (return . snd . itemBody)
-      )
-      (return years)
-    <> context
+archiveCtx years postctx = listField
+  "years"
+  (  field "year" (return . fst . itemBody)
+  <> listFieldWith "posts" postctx (return . snd . itemBody)
+  )
+  (return years)
 
 -- Index page
 indexCtx :: [Item String] -> Context String -> Context String
-indexCtx posts context =
-  mathCtx
-    <> listField "posts"
-                 (teaserField "teaser" "_content" <> postCtx context)
-                 (return posts)
-    <> context
+indexCtx posts postContext = listField
+  "posts"
+  (teaserField "teaser" "_content" <> postContext)
+  (return posts)
 
 ------------------------------------------
 -- Support contexts
@@ -83,5 +77,5 @@ mathCtx = field "katex-header" $ \item -> do
 -- Feed functions
 
 -- Feed context
-feedCtx :: Context String -> Context String
-feedCtx context = postCtx context <> bodyField "description"
+feedCtx :: Context String
+feedCtx = postCtx <> bodyField "description"
