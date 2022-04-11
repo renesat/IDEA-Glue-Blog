@@ -1,0 +1,16 @@
+---
+title: Tags
+page-id: tags
+---
+
+    $for(tags)$
+    <br>
+    <div class="tag">$tag$</div>
+    <ul>
+       $for(posts)$
+       <li>
+           <a href="$url$">$title$</a> - $date$
+       </li>
+       $endfor$
+    </ul>
+    $endfor$
