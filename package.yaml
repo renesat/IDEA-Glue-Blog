@@ -24,6 +24,7 @@ executables:
       - hakyll-sass == 0.2.4
       - text == 1.*
       - language-javascript == 0.7.*
+      - blaze-html (>=0.5 && <0.10)
       - ini
       - unordered-containers
       - process

@@ -3,14 +3,21 @@ title: Tags
 page-id: tags
 ---
 
-    $for(tags)$
-    <br>
-    <div class="tag">$tag$</div>
-    <ul>
-       $for(posts)$
-       <li>
-           <a href="$url$">$title$</a> - $date$
-       </li>
-       $endfor$
+<h1 class="p-name" id="title">
+    Tags
+</h1>
+
+<style>
+.cont {
+  display: flex;
+  flex-flow: row wrap; /* Shorthand for flex-direction: row and flex-wrap: wrap */
+}
+.cont li {
+  flex-basis: 20%; /* or width: 50% */
+}
+</style>
+<div>
+    <ul class="cont">
+        $tags$
     </ul>
-    $endfor$
+</div>
