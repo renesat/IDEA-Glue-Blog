@@ -1,0 +1,78 @@
+---
+name: "Build and deploy blog"
+on:  # yamllint disable-line rule:truthy
+  pull_request:
+  push:
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: cachix/install-nix-action@v20
+        with:
+          nix_path: nixpkgs=channel:nixos-unstable
+      - name: Build blog
+        run: nix build .#blog
+      - name: Archive blog static files
+        uses: actions/upload-artifact@v3
+        with:
+          name: blog-static
+          path: result/public
+  haskell-format:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v3
+      - uses: cachix/install-nix-action@v20
+        with:
+          nix_path: nixpkgs=channel:nixos-unstable
+      - name: Check Haskell format
+        run: nix develop --command fourmolu src/ -m check
+
+  nix-format:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v3
+      - uses: cachix/install-nix-action@v20
+        with:
+          nix_path: nixpkgs=channel:nixos-unstable
+      - name: Check nix format
+        run: nix develop --command nixfmt -c ./**/*.nix
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/master'
+    steps:
+      - name: Download blog artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: blog-static
+          path: ~/static
+      - name: Deploy
+        env:
+          SSH_KEY: ${{ secrets.DEPLOY_KEY }}
+          GIT_SSH_COMMAND: 'ssh -i ~/deploy.key'
+        run: |
+          # Get SSH key
+          echo "$SSH_KEY" > ~/deploy.key && chmod 400 ~/deploy.key
+          # Get page repo
+          git clone git@github.com:renesat/renesat.github.io.git
+          cd renesat.github.io/
+          # Set git conifig
+          git config user.name "$(git log -n 1 --pretty=format:%an)"
+          git config user.email "$(git log -n 1 --pretty=format:%ae)"
+          # Put data
+          rm -rf ./* && cp -r ~/static/* ./
+          if [[ `git status --porcelain` ]]; then
+            # Create commit
+            git add . && git commit -m "Publish"
+            # Push
+            git push
+            echo "Deploy done"
+          else
+            echo "Nothing change"
+          fi

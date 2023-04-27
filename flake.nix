@@ -89,6 +89,7 @@
               pkgs.haskellPackages.hasktags
               pkgs.haskellPackages.fourmolu
               pkgs.haskell-language-server
+              pkgs.nixfmt
             ];
             NIX_PATH = "nixpkgs=" + pkgs.path;
           };
