@@ -18,6 +18,30 @@
           sandbox = false;
         };
 
+        blog-builder =
+          pkgs.haskellPackages.callCabal2nix "IDEA-Glue-Blog-Builder" self { };
+
+        blog = pkgs.stdenvNoCC.mkDerivation {
+          name = "IDEA-Glue-Blog";
+          src = pkgs.lib.cleanSource self;
+          nativeBuildInputs = with pkgs; [
+            inkscape
+            imagemagick
+            python3Packages.pygments
+            nodePackages.katex
+          ];
+          buildPhase = ''
+            ${blog-builder}/bin/site build
+          '';
+          installPhase = ''
+            mkdir -p $out
+            cp -r build/site $out/public
+          '';
+          LANG = "C.UTF-8";
+        };
+
+        blog-dev = blog.overrideAttrs (old: rec { src = self; });
+
         stack-nix-integration = pkgs.writeText "stack-nix-integration.nix" ''
           {ghc}:
           let
@@ -56,14 +80,18 @@
         };
 
       in {
-        devShell = pkgs.mkShell {
-          buildInputs = [
-            stack-wrapped
-            pkgs.haskellPackages.hasktags
-            pkgs.haskellPackages.fourmolu
-            pkgs.haskell-language-server
-          ];
-          NIX_PATH = "nixpkgs=" + pkgs.path;
+        packages = { inherit blog blog-builder blog-dev; };
+        packages.default = blog-builder;
+        devShells = {
+          default = pkgs.mkShell {
+            buildInputs = [
+              stack-wrapped
+              pkgs.haskellPackages.hasktags
+              pkgs.haskellPackages.fourmolu
+              pkgs.haskell-language-server
+            ];
+            NIX_PATH = "nixpkgs=" + pkgs.path;
+          };
         };
       });
 }

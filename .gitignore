@@ -3,7 +3,11 @@
 *.log
 tmp/
 
+# Nix
+.direnv
+/result
+
+
 # Stack
 .stack-work/
 build/
-.direnv
