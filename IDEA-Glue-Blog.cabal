@@ -27,6 +27,7 @@ executable site
   build-depends:
       aeson
     , base ==4.*
+    , blaze-html >=0.5 && <0.10
     , bytestring
     , containers
     , filepath

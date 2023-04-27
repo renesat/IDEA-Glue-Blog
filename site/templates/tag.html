@@ -3,4 +3,14 @@
     Tag: $title$
 </h1>
 
-$partial("templates/post-list.html")$
+$for(years)$
+    <br>
+    <div class="archive-year">$year$</div>
+    <ul>
+       $for(posts)$
+       <li>
+           <a href="$url$">$title$</a> - $date$
+       </li>
+       $endfor$
+    </ul>
+$endfor$

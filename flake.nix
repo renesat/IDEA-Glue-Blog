@@ -57,7 +57,12 @@
 
       in {
         devShell = pkgs.mkShell {
-          buildInputs = [ stack-wrapped ];
+          buildInputs = [
+            stack-wrapped
+            pkgs.haskellPackages.hasktags
+            pkgs.haskellPackages.fourmolu
+            pkgs.haskell-language-server
+          ];
           NIX_PATH = "nixpkgs=" + pkgs.path;
         };
       });
