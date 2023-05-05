@@ -1,3 +1,5 @@
+{-# LANGUAGE OverloadedStrings #-}
+
 -- | Contecst functions
 module Context where
 
@@ -29,10 +31,13 @@ contextFromBlogConfig blogConfig =
 
 -- Base on https://groups.google.com/forum/#!searchin/hakyll/if$20class/hakyll/WGDYRa3Xg-w/nMJZ4KT8OZUJ
 activeClassField :: Context a
-activeClassField = functionField "activeClass" $ \[p] item -> do
-    page <- getMetadataField (itemIdentifier item) "page-id" >>= pageExists
-    return $ if page == p then "active" else page
+activeClassField = functionField "activeClass" $ checkActiveClass
   where
+    checkActiveClass [p] item = do
+        page <- getMetadataField (itemIdentifier item) "page-id" >>= pageExists
+        return $ if page == p then "active" else page
+    checkActiveClass _ _ = fail "activeClass need only one parameter of page class!"
+
     pageExists (Just v) = return v
     pageExists Nothing = return "none"
 
