@@ -17,15 +17,34 @@
           inherit system;
           sandbox = false;
         };
+        catppuccin = with pkgs.python3.pkgs;
+          buildPythonPackage rec {
+            pname = "catppuccin";
+            version = "1.2.0";
+            src = pkgs.python3.pkgs.fetchPypi {
+              inherit pname version;
+              sha256 = "sha256-hUNt6RHntQzamDX1SdhBzSj3pR/xxb6lpwzvYnqwOIo=";
+            };
+            passthru.optional-dependencies = { pygments = [ pygments ]; };
+            doCheck = false;
+          };
 
         blog-builder =
-          pkgs.haskellPackages.callCabal2nix "IDEA-Glue-Blog-Builder" self {};
+          pkgs.haskellPackages.callCabal2nix "IDEA-Glue-Blog-Builder"
+          (pkgs.lib.cleanSourceWith {
+            filter = (path: type:
+              let
+                relPath =
+                  pkgs.lib.removePrefix (toString self + "/") (toString path);
+              in !(pkgs.lib.hasPrefix "site/" relPath));
+            src = self;
+          }) { };
 
         buildInputs = with pkgs; [
-            inkscape
-            imagemagick
-            python3Packages.pygments
-            nodePackages.katex
+          inkscape
+          imagemagick
+          (python3.withPackages (ps: [ ps.pygments catppuccin ]))
+          nodePackages.katex
         ];
         blog = pkgs.stdenvNoCC.mkDerivation {
           name = "IDEA-Glue-Blog";
@@ -94,15 +113,16 @@
         };
         devShells = {
           default = pkgs.mkShell {
-            buildInputs = with pkgs; [
-              stack-wrapped
+            buildInputs = with pkgs;
+              [
+                stack-wrapped
 
-              haskellPackages.hasktags
-              haskellPackages.fourmolu
-              haskell-language-server
-              nixfmt
-              html-tidy
-            ] ++ buildInputs;
+                haskellPackages.hasktags
+                haskellPackages.fourmolu
+                haskell-language-server
+                nixfmt
+                html-tidy
+              ] ++ buildInputs;
             NIX_PATH = "nixpkgs=" + pkgs.path;
           };
         };
