@@ -19,17 +19,18 @@
         };
 
         blog-builder =
-          pkgs.haskellPackages.callCabal2nix "IDEA-Glue-Blog-Builder" self { };
+          pkgs.haskellPackages.callCabal2nix "IDEA-Glue-Blog-Builder" self {};
 
-        blog = pkgs.stdenvNoCC.mkDerivation {
-          name = "IDEA-Glue-Blog";
-          src = pkgs.lib.cleanSource self;
-          nativeBuildInputs = with pkgs; [
+        buildInputs = with pkgs; [
             inkscape
             imagemagick
             python3Packages.pygments
             nodePackages.katex
-          ];
+        ];
+        blog = pkgs.stdenvNoCC.mkDerivation {
+          name = "IDEA-Glue-Blog";
+          src = pkgs.lib.cleanSource self;
+          nativeBuildInputs = buildInputs;
           buildPhase = ''
             ${blog-builder}/bin/site build
           '';
@@ -80,17 +81,28 @@
         };
 
       in {
-        packages = { inherit blog blog-builder blog-dev; };
-        packages.default = blog-builder;
+        packages = {
+          inherit blog blog-builder blog-dev;
+          default = blog-builder;
+        };
+        apps = {
+          builder = {
+            type = "app";
+            program = "${blog-builder}/bin/site";
+          };
+          defalut = self.apps."${system}".builder;
+        };
         devShells = {
           default = pkgs.mkShell {
-            buildInputs = [
+            buildInputs = with pkgs; [
               stack-wrapped
-              pkgs.haskellPackages.hasktags
-              pkgs.haskellPackages.fourmolu
-              pkgs.haskell-language-server
-              pkgs.nixfmt
-            ];
+
+              haskellPackages.hasktags
+              haskellPackages.fourmolu
+              haskell-language-server
+              nixfmt
+              html-tidy
+            ] ++ buildInputs;
             NIX_PATH = "nixpkgs=" + pkgs.path;
           };
         };
