@@ -2,6 +2,7 @@
 
 module Pygments.Pygments
     ( pygmentizeIO
+    , pygmentizeStyleCompiler
     ) where
 
 import Data.Char (toLower)
@@ -40,3 +41,10 @@ pygmentizeToHTML code options
                 "<div class =\"highlight\"><pre>"
                     ++ T.unpack code
                     ++ "</pre></div>"
+
+pygmentizeStyleCompiler :: String -> Compiler String
+pygmentizeStyleCompiler style =
+    unixFilter
+        "pygmentize"
+        ["-S", style, "-f", "html", "-a", ".highlight"]
+        ""

@@ -6,6 +6,12 @@ module Main where
 import Control.Applicative (liftA2)
 import Control.Monad (filterM)
 import qualified Data.ByteString.Lazy as LBS
+import Data.HashMap.Strict
+    ( (!)
+    )
+import Data.Text
+    ( unpack
+    )
 import Hakyll
 import Hakyll.Web.Sass (sassCompiler)
 import KaTeX.KaTeXify (kaTeXifyIO)
@@ -16,7 +22,7 @@ import Language.JavaScript.Pretty.Printer
 import Language.JavaScript.Process.Minify
     ( minifyJS
     )
-import Pygments.Pygments (pygmentizeIO)
+import Pygments.Pygments (pygmentizeIO, pygmentizeStyleCompiler)
 import System.Process
     ( StdStream (..)
     , createProcess
@@ -128,6 +134,12 @@ main = hakyllWith generatorConfig $ do
                 >>= applyAsTemplate ctx
                 >>= loadAndApplyTemplate "templates/default.html" ctx
                 >>= relativizeUrls
+
+    create ["css/highlight.css"] $ do
+        route idRoute
+        compile $ do
+            let theme = unpack $ blogConfig ! "highlight-theme"
+            pygmentizeStyleCompiler theme >>= makeItem
 
     create ["atom.xml"] $ do
         route idRoute
