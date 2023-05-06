@@ -30,7 +30,7 @@
           };
 
         blog-builder =
-          pkgs.haskellPackages.callCabal2nix "IDEA-Glue-Blog-Builder"
+          pkgs.haskellPackages.callCabal2nixWithOptions "IDEA-Glue-Blog-Builder"
           (pkgs.lib.cleanSourceWith {
             filter = (path: type:
               let
@@ -38,7 +38,7 @@
                   pkgs.lib.removePrefix (toString self + "/") (toString path);
               in !(pkgs.lib.hasPrefix "site/" relPath));
             src = self;
-          }) { };
+          }) "--hpack"{ };
 
         buildInputs = with pkgs; [
           inkscape
