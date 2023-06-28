@@ -120,6 +120,13 @@
             '';
             category = "Dev Tools";
           };
+          site = {
+            description = "Site control";
+            exec = ''
+              cabal run site "$@"
+            '';
+            category = "Dev Tools";
+          };
         };
 
         packages = {
@@ -132,13 +139,12 @@
 
         devShells.default = pkgs.mkShell {
           name = "IDEA-Glue-Blog";
-          inputsFrom =
-            [
-              config.haskellProjects.default.outputs.devShell
-              config.flake-root.devShell
-              config.mission-control.devShell
-            ]
-            ++ buildInputs;
+          inputsFrom = [
+            config.haskellProjects.default.outputs.devShell
+            config.flake-root.devShell
+            config.mission-control.devShell
+          ];
+          packages = buildInputs;
         };
       };
     };
