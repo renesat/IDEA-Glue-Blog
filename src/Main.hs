@@ -3,6 +3,8 @@
 
 module Main where
 
+import Configs
+import Context
 import Control.Applicative (liftA2)
 import Control.Monad (filterM)
 import qualified Data.ByteString.Lazy as LBS
@@ -42,9 +44,6 @@ import Text.Pandoc.Options
     , writerHighlightStyle
     , writerTableOfContents
     )
-
-import Configs
-import Context
 
 --------------------------------------------------------------------------------
 -- Contexts
@@ -165,11 +164,11 @@ main = hakyllWith generatorConfig $ do
 --------------------------------------------------------------------------------
 
 -- Get only post with status pablished
-getPublished :: MonadMetadata m => [Item a] -> m [Item a]
+getPublished :: (MonadMetadata m) => [Item a] -> m [Item a]
 getPublished = filterM publishedFilter
 
 -- Filter for published posts
-publishedFilter :: MonadMetadata m => Item a -> m Bool
+publishedFilter :: (MonadMetadata m) => Item a -> m Bool
 publishedFilter item = do
     status <- getMetadataField (itemIdentifier item) "status" >>= pageExists
     return $ status == "published"
@@ -211,6 +210,7 @@ type FeedRenderer =
     Context String ->
     [Item String] ->
     Compiler (Item String)
+
 feedCompiler ::
     FeedRenderer ->
     FeedConfiguration ->
@@ -235,17 +235,15 @@ createFaviconExportLine size (TmpFile path) =
 getFaviconPngs :: FilePath -> [Int] -> Compiler [TmpFile]
 getFaviconPngs svgPath sizes = do
     tmpFiles <-
-        sequence $
-            map
-                (\size -> newTmpFile $ "hakyll-blog-favicon-" ++ show size ++ ".png")
-                sizes
-    actions <-
-        return $
+        mapM
+            (\size -> newTmpFile $ "hakyll-blog-favicon-" ++ show size ++ ".png")
+            sizes
+    let actions =
             foldr1 (++) $
-                map (uncurry createFaviconExportLine) $
-                    zip
-                        sizes
-                        tmpFiles
+                zipWith
+                    createFaviconExportLine
+                    sizes
+                    tmpFiles
     (_, _, _, handle) <-
         unsafeCompiler $
             createProcess
@@ -278,13 +276,13 @@ postsByYears posts = do
         year <- getYear $ head lst
         makeItem (year, lst)
 
-getYear :: MonadMetadata m => Item a -> m String
+getYear :: (MonadMetadata m) => Item a -> m String
 getYear item = do
     date <- getMetadataField (itemIdentifier item) "published"
     return $ maybe "Unknown" (take 4) date
 
 -- Source: https://doisinkidney.com/posts/2018-02-11-monadic-list.functions.html
-groupByM :: Applicative m => (a -> a -> m Bool) -> [a] -> m [[a]]
+groupByM :: (Applicative m) => (a -> a -> m Bool) -> [a] -> m [[a]]
 groupByM p xs =
     fmap
         snd
