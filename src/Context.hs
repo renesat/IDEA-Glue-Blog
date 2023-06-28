@@ -31,7 +31,7 @@ contextFromBlogConfig blogConfig =
 
 -- Base on https://groups.google.com/forum/#!searchin/hakyll/if$20class/hakyll/WGDYRa3Xg-w/nMJZ4KT8OZUJ
 activeClassField :: Context a
-activeClassField = functionField "activeClass" $ checkActiveClass
+activeClassField = functionField "activeClass" checkActiveClass
   where
     checkActiveClass [p] item = do
         page <- getMetadataField (itemIdentifier item) "page-id" >>= pageExists
@@ -68,13 +68,17 @@ indexCtx posts postContext =
         (return posts)
 
 -- Tag page
-tagCtx :: String -> [Item (String, [Item String])] -> Context String -> Context String
+tagCtx ::
+    String -> [Item (String, [Item String])] -> Context String -> Context String
 tagCtx tag years postContext =
     constField "title" tag
         <> listField
             "years"
             ( field "year" (return . fst . itemBody)
-                <> listFieldWith "posts" (teaserField "teaser" "_content" <> postContext) (return . snd . itemBody)
+                <> listFieldWith
+                    "posts"
+                    (teaserField "teaser" "_content" <> postContext)
+                    (return . snd . itemBody)
             )
             (return years)
 
@@ -85,7 +89,13 @@ tagsCtx tags =
         "tags"
         ( \_ ->
             renderTags
-                (\tag url count _ _ -> renderHtml $ H.li $ H.a ! A.href (toValue url) $ toHtml $ tag ++ " (" ++ show count ++ ")")
+                ( \tag url count _ _ ->
+                    renderHtml $
+                        H.li $
+                            H.a ! A.href (toValue url) $
+                                toHtml $
+                                    tag ++ " (" ++ show count ++ ")"
+                )
                 concat
                 tags
         )

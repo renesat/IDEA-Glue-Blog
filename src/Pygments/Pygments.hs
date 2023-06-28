@@ -3,7 +3,8 @@
 module Pygments.Pygments
     ( pygmentizeIO
     , pygmentizeStyleCompiler
-    ) where
+    )
+where
 
 import Data.Char (toLower)
 import qualified Data.Text as T

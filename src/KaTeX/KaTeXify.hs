@@ -1,7 +1,8 @@
 -- Source: https://ifazk.com/blog/2018-11-20-JavaScript-free-Hakyll-site.html
 module KaTeX.KaTeXify
     ( kaTeXifyIO
-    ) where
+    )
+where
 
 import qualified Data.Text as T
 import Data.Text.Conversions (convertText)
