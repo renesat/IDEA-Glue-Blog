@@ -82,6 +82,7 @@ jobs:
           git config user.name "$(git log -n 1 --pretty=format:%an)"
           git config user.email "$(git log -n 1 --pretty=format:%ae)"
           # Put data
+          cp ./CNAME ~/static/
           rm -rf ./* && cp -r ~/static/* ./
           if [[ `git status --porcelain` ]]; then
             # Create commit
