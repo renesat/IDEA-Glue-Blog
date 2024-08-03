@@ -114,8 +114,12 @@
               help = "Find unused expressions in nix code";
             }
             {
+              package = pkgs.hlint;
+              help = "Source code suggestions";
+            }
+            {
               package = pkgs.haskellPackages.fourmolu;
-              help = "";
+              help = "A formatter for Haskell source code";
             }
             {
               package = pkgs.nix-output-monitor;
