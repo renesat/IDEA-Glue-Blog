@@ -1,6 +1,6 @@
 ---
 name: "Build and deploy blog"
-on:  # yamllint disable-line rule:truthy
+on: # yamllint disable-line rule:truthy
   pull_request:
   push:
 permissions:
@@ -71,7 +71,7 @@ jobs:
       - name: Deploy
         env:
           SSH_KEY: ${{ secrets.DEPLOY_KEY }}
-          GIT_SSH_COMMAND: 'ssh -i ~/deploy.key'
+          GIT_SSH_COMMAND: "ssh -i ~/deploy.key"
         run: |
           # Get SSH key
           echo "$SSH_KEY" > ~/deploy.key && chmod 400 ~/deploy.key

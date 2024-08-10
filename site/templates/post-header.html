@@ -1,19 +1,17 @@
-
 <a class="hide u-url" href="$url$">$title$</a>
 
 <section class="header">
-    Posted on <time class="dt-published" datetime="$published$">$date$</time>
+  Posted on <time class="dt-published" datetime="$published$">$date$</time>
 </section>
 
 <div class="header">
-    $if(tags)$
-    Tags: <span rel=tag class="p-category">$tags$</span>
-    <!-- TODO: add class for each tag -->
-    $endif$
+  $if(tags)$ Tags: <span rel="tag" class="p-category">$tags$</span>
+  <!-- TODO: add class for each tag -->
+  $endif$
 </div>
 
 <div class="header hide">
-    <a rel="author" class="p-author h-card" rel="me" href="$blog-link$">
-        $blog-author$
-    </a>
+  <a rel="author" class="p-author h-card" rel="me" href="$blog-link$">
+    $blog-author$
+  </a>
 </div>

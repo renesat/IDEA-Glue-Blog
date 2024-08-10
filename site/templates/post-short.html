@@ -1,16 +1,11 @@
 <article class="h-entry">
-    <h1 class="p-name teaser-title">
-        <a href="$url$">$title$</a></h1>
-    </h1>
+  <h1 class="p-name teaser-title">
+    <a href="$url$">$title$</a>
+  </h1>
 
-    $partial("templates/post-header.html")$
+  $partial("templates/post-header.html")$
 
-    <section class="e-content">
-        $if(teaser)$
-            $teaser$
-        $endif$
-    </section>
+  <section class="e-content">$if(teaser)$ $teaser$ $endif$</section>
 
-    <p><a class="readmore" href="$url$">Read more..</a></p>
-
+  <p><a class="readmore" href="$url$">Read more..</a></p>
 </article>

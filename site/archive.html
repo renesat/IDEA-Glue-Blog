@@ -3,14 +3,12 @@ title: Archive
 page-id: archive
 ---
 
-    $for(years)$
-    <br>
-    <div class="archive-year">$year$</div>
-    <ul>
-       $for(posts)$
-       <li>
-           <a href="$url$">$title$</a> - $date$
-       </li>
-       $endfor$
-    </ul>
-    $endfor$
+$for(years)$
+<br />
+<div class="archive-year">$year$</div>
+<ul>
+  $for(posts)$
+  <li><a href="$url$">$title$</a> - $date$</li>
+  $endfor$
+</ul>
+$endfor$

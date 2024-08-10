@@ -3,9 +3,6 @@
     nixpkgs.url = "nixpkgs/nixos-unstable";
     flake-parts.url = "github:hercules-ci/flake-parts";
     haskell-flake.url = "github:srid/haskell-flake";
-    treefmt-nix.url = "github:numtide/treefmt-nix";
-    treefmt-nix.inputs.nixpkgs.follows = "nixpkgs";
-    flake-root.url = "github:srid/flake-root";
     mission-control.url = "github:Platonic-Systems/mission-control";
     devshell.url = "github:numtide/devshell";
     pre-commit-hooks = {
@@ -31,6 +28,7 @@
       ];
       perSystem = {
         self',
+        config,
         lib,
         pkgs,
         ...
@@ -84,6 +82,17 @@
           statix.enable = true;
           fourmolu.enable = true;
           hlint.enable = true;
+          hpack.enable = true;
+          denolint.enable = true;
+          prettier = {
+            enable = true;
+            settings = {
+              single-quote = false;
+            };
+            excludes = [
+              "^flake.lock$"
+            ];
+          };
         };
 
         packages = {
@@ -94,9 +103,19 @@
           default = self'.apps.site;
         };
 
-        devshells.default = {
+        devshells.default = let
+          inherit (pkgs) haskellPackages;
+        in {
+          devshell = {
+            packagesFrom = [config.haskellProjects.default.outputs.devShell];
+            startup.pre-commit.text = config.pre-commit.installationScript;
+          };
           packages = buildInputs;
           commands = [
+            {
+              package = pkgs.nodePackages.prettier;
+              help = "Opinionated multi-language code formatter";
+            }
             {
               package = pkgs.just;
               help = "Just a command runner";
@@ -104,18 +123,6 @@
             {
               package = pkgs.alejandra;
               help = "Format nix code";
-            }
-            {
-              package = pkgs.statix;
-              help = "Lint nix code";
-            }
-            {
-              package = pkgs.deadnix;
-              help = "Find unused expressions in nix code";
-            }
-            {
-              package = pkgs.hlint;
-              help = "Source code suggestions";
             }
             {
               package = pkgs.haskellPackages.fourmolu;
