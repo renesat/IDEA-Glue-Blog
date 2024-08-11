@@ -28,17 +28,20 @@ jobs:
 
   check:
     runs-on: ubuntu-latest
-    needs: build
     steps:
       - uses: actions/checkout@v4
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@v13
+        with:
+          extra-conf: "extra-platforms = aarch64-linux"
       - name: Run the Magic Nix Cache
         uses: DeterminateSystems/magic-nix-cache-action@v7
       - name: Check Nix flake inputs
         uses: DeterminateSystems/flake-checker-action@v4
       - name: Check flake and pre-commit
-        run: nix flake check -v -L
+        run: nix flake check -v -L --all-systems
 
   deploy:
     runs-on: ubuntu-latest
