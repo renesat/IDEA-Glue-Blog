@@ -14,6 +14,10 @@ jobs:
         uses: DeterminateSystems/nix-installer-action@v13
       - name: Run the Magic Nix Cache
         uses: DeterminateSystems/magic-nix-cache-action@v7
+      - name: Check Nix flake inputs
+        uses: DeterminateSystems/flake-checker-action@v4
+      - name: Build blog builder
+        run: nix build
       - name: Build blog
         run: nix build .#blog
       - name: Archive blog static files
@@ -31,8 +35,10 @@ jobs:
         uses: DeterminateSystems/nix-installer-action@v13
       - name: Run the Magic Nix Cache
         uses: DeterminateSystems/magic-nix-cache-action@v7
+      - name: Check Nix flake inputs
+        uses: DeterminateSystems/flake-checker-action@v4
       - name: Check flake and pre-commit
-        run: nix flake check
+        run: nix flake check -v -L
 
   deploy:
     runs-on: ubuntu-latest
