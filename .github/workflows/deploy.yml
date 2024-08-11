@@ -22,7 +22,7 @@ jobs:
           name: blog-static
           path: result/public
 
-  haskell-format:
+  check:
     runs-on: ubuntu-latest
     needs: build
     steps:
@@ -31,32 +31,8 @@ jobs:
         uses: DeterminateSystems/nix-installer-action@v4
       - name: Run the Magic Nix Cache
         uses: DeterminateSystems/magic-nix-cache-action@v1
-      - name: Check Haskell format
-        run: nix develop --command fourmolu src/ -m check
-
-  nix-format:
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - uses: actions/checkout@v3
-      - name: Install Nix
-        uses: DeterminateSystems/nix-installer-action@v4
-      - name: Run the Magic Nix Cache
-        uses: DeterminateSystems/magic-nix-cache-action@v1
-      - name: Check nix format
-        run: nix develop --command alejandra -c .
-
-  haskell-linter:
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - uses: actions/checkout@v3
-      - name: Install Nix
-        uses: DeterminateSystems/nix-installer-action@v4
-      - name: Run the Magic Nix Cache
-        uses: DeterminateSystems/magic-nix-cache-action@v1
-      - name: Check haskell linter
-        run: nix develop --command hlint .
+      - name: Check flake and pre-commit
+        run: nix flake check
 
   deploy:
     runs-on: ubuntu-latest
