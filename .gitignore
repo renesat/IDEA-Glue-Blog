@@ -3,6 +3,7 @@
 *.log
 tmp/
 /TAGS
+.pre-commit-config.yaml
 
 # Nix
 .direnv

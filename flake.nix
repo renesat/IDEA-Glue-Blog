@@ -3,7 +3,6 @@
     nixpkgs.url = "nixpkgs/nixos-unstable";
     flake-parts.url = "github:hercules-ci/flake-parts";
     haskell-flake.url = "github:srid/haskell-flake";
-    mission-control.url = "github:Platonic-Systems/mission-control";
     devshell.url = "github:numtide/devshell";
     pre-commit-hooks = {
       url = "github:cachix/pre-commit-hooks.nix";
@@ -41,14 +40,19 @@
               inherit pname version;
               sha256 = "sha256-hUNt6RHntQzamDX1SdhBzSj3pR/xxb6lpwzvYnqwOIo=";
             };
-            passthru.optional-dependencies = {pygments = [pygments];};
+            passthru.optional-dependencies = {
+              pygments = [pygments];
+            };
             doCheck = false;
           };
 
         buildInputs = with pkgs; [
           inkscape
           imagemagick
-          (python3.withPackages (ps: [ps.pygments catppuccin]))
+          (python3.withPackages (ps: [
+            ps.pygments
+            catppuccin
+          ]))
           nodePackages.katex
         ];
 
@@ -65,7 +69,9 @@
           '';
           LANG = "C.UTF-8";
         };
-        blog-dev = blog.overrideAttrs (_: rec {src = self;});
+        blog-dev = blog.overrideAttrs (_: {
+          src = self;
+        });
       in {
         haskellProjects.default = {
           devShell = {
@@ -73,7 +79,11 @@
           };
           packages = {
           };
-          autoWire = ["packages" "apps" "checks"];
+          autoWire = [
+            "packages"
+            "apps"
+            "checks"
+          ];
         };
 
         pre-commit.settings.hooks = {
@@ -103,9 +113,7 @@
           default = self'.apps.site;
         };
 
-        devshells.default = let
-          inherit (pkgs) haskellPackages;
-        in {
+        devshells.default = {
           devshell = {
             packagesFrom = [config.haskellProjects.default.outputs.devShell];
             startup.pre-commit.text = config.pre-commit.installationScript;
