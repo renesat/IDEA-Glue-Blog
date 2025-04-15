@@ -4,6 +4,7 @@
 tmp/
 /TAGS
 .pre-commit-config.yaml
+dist-newstyle/
 
 # Nix
 .direnv

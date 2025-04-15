@@ -1,21 +1,20 @@
----
 name: "Build and deploy blog"
 on: # yamllint disable-line rule:truthy
   pull_request:
   push:
-permissions:
-  contents: write
+permissions: {}
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code 🛎️
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - name: Install Nix
-        uses: DeterminateSystems/nix-installer-action@v13
-      - name: Run the Magic Nix Cache
-        uses: DeterminateSystems/magic-nix-cache-action@v7
+        uses: DeterminateSystems/nix-installer-action@v16
       - name: Check Nix flake inputs
-        uses: DeterminateSystems/flake-checker-action@v4
+        uses: DeterminateSystems/flake-checker-action@v9
       - name: Build blog builder
         run: nix build
       - name: Build blog
@@ -25,56 +24,47 @@ jobs:
         with:
           name: blog-static
           path: result/public
-
   check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code 🛎️
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
       - name: Install Nix
-        uses: DeterminateSystems/nix-installer-action@v13
+        uses: DeterminateSystems/nix-installer-action@v16
         with:
           extra-conf: "extra-platforms = aarch64-linux"
-      - name: Run the Magic Nix Cache
-        uses: DeterminateSystems/magic-nix-cache-action@v7
       - name: Check Nix flake inputs
-        uses: DeterminateSystems/flake-checker-action@v4
+        uses: DeterminateSystems/flake-checker-action@v9
       - name: Check flake and pre-commit
         run: nix flake check -v -L --all-systems
-
   deploy:
     runs-on: ubuntu-latest
     needs: build
     if: github.ref == 'refs/heads/master'
+    permissions:
+      contents: write
     steps:
+      - name: Checkout code 🛎️
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - name: Download blog artifact
         uses: actions/download-artifact@v4
         with:
           name: blog-static
-          path: ~/static
-      - name: Deploy
-        env:
-          SSH_KEY: ${{ secrets.DEPLOY_KEY }}
-          GIT_SSH_COMMAND: "ssh -i ~/deploy.key"
-        run: |
-          # Get SSH key
-          echo "$SSH_KEY" > ~/deploy.key && chmod 400 ~/deploy.key
-          # Get page repo
-          git clone git@github.com:renesat/renesat.github.io.git
-          cd renesat.github.io/
-          # Set git conifig
-          git config user.name "$(git log -n 1 --pretty=format:%an)"
-          git config user.email "$(git log -n 1 --pretty=format:%ae)"
-          # Put data
-          cp ./CNAME ~/static/
-          rm -rf ./* && cp -r ~/static/* ./
-          if [[ `git status --porcelain` ]]; then
-            # Create commit
-            git add . && git commit -m "Publish"
-            # Push
-            git push
-            echo "Deploy done"
-          else
-            echo "Nothing change"
-          fi
+          path: ./static/
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          repository-name: renesat/renesat.github.io
+          branch: main
+          single-commit: true
+          token: ${{ secrets.DEPLOY_TOKEN }}
+          folder: ./static/
+          clean: true
+          clean-exclude: |
+            CNAME

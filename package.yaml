@@ -1,17 +1,13 @@
 name: IDEA-Glue-Blog
 version: 0.1.0
-
 author: "Ivan Smolyakov"
 maintainer: "self@renesat.me"
 copyright: "2020-2023 Ivan Smolyakov"
 license: MIT
-
 ghc-options: -Wall
-
 dependencies:
   - base
   - filepath
-
 executables:
   site:
     source-dirs:

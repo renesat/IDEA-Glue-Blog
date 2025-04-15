@@ -8,6 +8,10 @@
       url = "github:cachix/pre-commit-hooks.nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    treefmt-nix = {
+      url = "github:numtide/treefmt-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs @ {
@@ -20,6 +24,7 @@
         inputs.haskell-flake.flakeModule
         inputs.devshell.flakeModule
         inputs.pre-commit-hooks.flakeModule
+        inputs.treefmt-nix.flakeModule
       ];
       systems = [
         "aarch64-linux"
@@ -86,23 +91,44 @@
           ];
         };
 
+        treefmt = {
+          programs = {
+            fourmolu.enable = true;
+            alejandra.enable = true;
+            taplo.enable = true;
+            prettier = {
+              enable = true;
+            };
+            yamlfmt = {
+              enable = true;
+            };
+          };
+        };
+
         pre-commit.settings.hooks = {
-          alejandra.enable = true;
-          deadnix.enable = true;
+          treefmt = {
+            enable = true;
+            package = config.treefmt.build.wrapper;
+          };
+          deadnix = {
+            enable = true;
+            args = ["--edit"];
+          };
+          zizmor = {
+            enable = true;
+            name = "zizmor";
+            description = "Find security issues in GitHub Actions CI/CD setups";
+            types = ["yaml"];
+            files = "(\.github/workflows/.*)|(action\.ya?ml)$";
+            require_serial = true;
+            entry = lib.getExe pkgs.zizmor;
+          };
           statix.enable = true;
-          fourmolu.enable = true;
+          nil.enable = true;
+          ripsecrets.enable = true;
           hlint.enable = true;
           hpack.enable = true;
           denolint.enable = true;
-          prettier = {
-            enable = true;
-            settings = {
-              single-quote = false;
-            };
-            excludes = [
-              "^flake.lock$"
-            ];
-          };
         };
 
         packages = {
@@ -121,20 +147,12 @@
           packages = buildInputs;
           commands = [
             {
-              package = pkgs.nodePackages.prettier;
-              help = "Opinionated multi-language code formatter";
-            }
-            {
               package = pkgs.just;
               help = "Just a command runner";
             }
             {
-              package = pkgs.alejandra;
-              help = "Format nix code";
-            }
-            {
-              package = pkgs.haskellPackages.fourmolu;
-              help = "A formatter for Haskell source code";
+              package = config.treefmt.build.wrapper;
+              help = "Format all";
             }
             {
               package = pkgs.nix-output-monitor;
